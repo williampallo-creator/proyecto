@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitoreo de Vibraciones - ESP32</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: #fff;
+      text-align: center;
+    }
+    .card {
+      background: #222;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px;
+      border-radius: 10px;
+    }
+    .alarma-on {
+      color: red;
+      font-weight: bold;
+    }
+    .alarma-off {
+      color: lime;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📊 Monitoreo de Motor</h1>
+
+<div class="card">
+  <p>AX: <span id="ax">0</span></p>
+  <p>AY: <span id="ay">0</span></p>
+  <p>AZ: <span id="az">0</span></p>
+  <p>Vibración: <span id="vib">0</span> m/s²</p>
+  <p>Estado: <span id="alarma" class="alarma-off">APAGADA</span></p>
+</div>
+
+<script>
+const ESP32_IP = "http://IP_DEL_ESP32/data";
+
+function actualizarDatos() {
+  fetch(ESP32_IP)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("ax").innerText = data.ax;
+      document.getElementById("ay").innerText = data.ay;
+      document.getElementById("az").innerText = data.az;
+      document.getElementById("vib").innerText = data.vibracion;
+
+      let alarma = document.getElementById("alarma");
+      alarma.innerText = data.alarma;
+
+      if (data.alarma === "ENCENDIDA") {
+        alarma.className = "alarma-on";
+      } else {
+        alarma.className = "alarma-off";
+      }
+    });
+}
+
+setInterval(actualizarDatos, 1000);
+</script>
+
+</body>
+</html>
